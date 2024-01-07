@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>reveal.js</title>
+
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section>
+          <h2>해양위성 산출물 3D 가시화</h2>
+          <img data-src="dist/assets/타이틀.jpg" style="height: 400px" />
+        </section>
+        <section>
+          <h2>목차</h2>
+          <ol>
+            <li>개요</li>
+            <li>주요 기능</li>
+            <li>위성관측 산출물 데이터 처리</li>
+            <li>다음 단계...</li>
+            <li>링크</li>
+          </ol>
+        </section>
+
+        <section data-transition="slide">
+          <h2>1. 개요</h2>
+        </section>
+        <section data-transition="slide">
+          <h4>개발 배경</h4>
+          <img data-src="dist/assets/개요_1_a.png" style="height: 300px" />
+          <ul>
+            <li style="font-size: 25px">
+              광범위한 위성 데이터 특성에 맞게 2D 지도보다 실제 지구와 같은 3D 지도 위에 데이터
+              시각화를 해보고 싶었습니다.
+            </li>
+            <li style="font-size: 25px">
+              CPU-렌더링 기반의 기존 라이브러리를 활용해 몇 천 만개의 격자 셀로 이뤄진 대용량 격자
+              데이터를 렌더링하는데 한계가 있었습니다. GPU-가속 렌더링으로 빠른 속도로 대용량
+              데이터를 시각화하고 싶었습니다. 또한 WebGL과 OpenGL Shading Language(GLSL)를 통해 좀
+              더 Low-Level 단에서 다양한 시각화 방법을 커스터마이징해보고 싶었습니다.
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>개발 배경 CONT</h4>
+          <img data-src="dist/assets/개요_1_b.jpg" style="height: 400px" />
+          <ul>
+            <li style="font-size: 25px">
+              개발자로서의 성장을 위한 사이드 미니 프로젝트로써 또한 회사적인 측면에서 새로운 관련
+              사업을 창출하기 위한 기회의 일환으로써 국립해양조사원 위성센터의 해양위성산출물
+              서비스를 사용자 측면에서 어떻게 개선시킬 수 있는지 고민하는 일련을 과정을 통해
+              프로젝트를 시작하게되었습니다.
+            </li>
+            <li style="font-size: 25px">
+              문제점: 느린 속도, 줌인 줌아웃 불가, 변수 변경 시 바로 업데이트되지 않는 불편함
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>간단 소개</h4>
+          <video data-autoplay src="dist/assets/개요_2.mp4" style="height: 400px"></video>
+          <p>
+            <small>천리안 2B호 위성관측을 통해 산출된 클로로필 농도를 시각화한 화면 </small>
+            <small
+              >✅ 클로로필(엽록소)은 바다의 일차 생산자로서 육지의 풀과 같습니다. 동시에 어류의 먹이
+              생물로써 수산자원의 지속적인 확보와 관리에 있어 중요한 존재입니다. 또한 해양의 여러
+              영양물과 이산화탄소를 흡수하여 생산된 식물성 플랑크톤의 광합성 색소로써 해양 오염이나
+              해양 생태계 현황과 기후 변화 등 여러가지 지표 정보로 사용될 수 있습니다.
+            </small>
+          </p>
+        </section>
+        <section data-transition="slide">
+          <h4>사용 스택 및 기술</h4>
+          <img data-src="dist/assets/개요_3.png" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">HTML, CSS, JavaScript</li>
+            <li style="font-size: 30px">Three.js, WebGL, OpenGL Shading Language(GLSL)</li>
+            <li style="font-size: 30px">Docker, Docker Compose, Traefik</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>왜 WebGL을 선택했는지?</h4>
+          <img data-src="dist/assets/개요_4.png" style="height: 400px" />
+          <p>
+            <small
+              >웹 브라우저에서도 클라이언트의 GPU(그래픽 프로세싱 유닛)를 활용할 수 있도록 해주는
+              브라우저용 JavaScript API specification
+            </small>
+          </p>
+          <p>
+            <small>➜ 웹/모바일에서도 GPU-가속 3D 렌더링 가능!</small>
+          </p>
+        </section>
+        <section data-transition="slide">
+          <h4>
+            CPU
+            <span style="text-transform: lowercase">vs.</span>
+            GPU
+          </h4>
+          <img data-src="dist/assets/개요_5.webp" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">CPU: 고성능 but 적은 core 수</li>
+            <li style="font-size: 30px">GPU: 저성능 but 많은 core 수</li>
+          </ul>
+          <p>
+            <small>
+              ➜ CPU 코어 자체는 GPU의 그것보다 강력하지만, 그래픽 계산 및 병렬 프로세스에 있어
+              다수의 코어로 이뤄진 GPU가 더 좋은 성능을 보여줍니다.</small
+            >
+          </p>
+        </section>
+        <section data-transition="slide">
+          <h4>WebGL 렌더링 파이프라인</h4>
+          <img data-src="dist/assets/개요_6.png" style="height: 400px" />
+          <p>
+            <small>
+              ➜ 픽셀이 백 만개라면, CPU는 백 만개의 픽셀을 하나씩 돌면서 픽셀에 점을 찍는 반면,
+              GPU는 백 만개의 점을 찍고 래스터화 과정이 서로 격리되어 독립적이어서 빠르게 병렬적으로
+              처리할 수 있습니다.</small
+            >
+          </p>
+        </section>
+
+        <section data-transition="slide">
+          <h2>2. 주요 기능</h2>
+        </section>
+        <section data-transition="slide">
+          <h4>변수 컨트롤</h4>
+          <video data-autoplay data-src="dist/assets/기능_1.mp4" style="height: 400px"></video>
+          <ul>
+            <li style="font-size: 30px">
+              다양한 변수(클로로필, 총 부유물 농도, 에어로졸 광학 두께, 구름 RGB 등)를 포인트 형태의
+              가시화 또는 텍스쳐를 이용한 래스터 형태의 가시화
+            </li>
+            <li style="font-size: 30px">
+              변수 토글 온/오프, 투명도 설정, 최솟최댓값 조정, 색상 스케일 선택
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>고해상도 해안선</h4>
+          <video data-autoplay src="dist/assets/기능_2.mp4" style="height: 400px"></video>
+          <ul>
+            <li style="font-size: 30px">해안선 토글 온/오프, 투명도 설정, 단일 색상 선택</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>HeightMap</h4>
+          <video data-autoplay src="dist/assets/기능_3.mp4" style="height: 400px"></video>
+          <ul>
+            <li style="font-size: 30px">스케일 값 조정으로 육지 고도 및 해양 수심 반영</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>기타</h4>
+          <img data-src="dist/assets/기능_4.png" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">
+              그 외 다양한 파라미터들(카메라, 축 도우미, 줌 및 회전 속도 등) 등을 업데이트 시 화면에
+              바로 적용됨
+            </li>
+          </ul>
+        </section>
+
+        <section data-transition="slide">
+          <h2>3. 위성관측 산출물 데이터 처리</h2>
+        </section>
+        <section data-transition="slide">
+          <h4>위성 산출물 데이터 출처</h4>
+          <img data-src="dist/assets/데이터_1.jpg" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">
+              데이터 출처: 국립해양조사원 국가해양위성센터(nosc.go.kr)
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>위성 산출물 데이터 포맷</h4>
+          <img data-src="dist/assets/데이터_2_a.png" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">
+              netCDF 파일 포맷은 다차원 시공간 대기(기상) 및 해양 관측 정보를 저장할 수 있는
+              대표적인 데이터 포맷입니다.
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>위성 산출물 데이터 포맷 CONT</h4>
+          <img data-src="dist/assets/데이터_2_b.jpg" style="height: 400px" />
+          <ul>
+            <li style="font-size: 25px">
+              한반도 주변 클로로필 위성 산출물 크기: 8000 X 10500 = 84,000,000 격자셀로 이뤄진
+              대용량 그리드 데이터
+            </li>
+            <li style="font-size: 25px">
+              netCDF 파일을 웹에서 바로 활용할 수 없어서 WebGL에 올리기에 적합한 텍스쳐 로 변환하기
+              위해 GDAL(Geospatial Data Abstraction Library) 프로그램을 활용했습니다.
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>위성 산출물 데이터 처리</h4>
+          <pre><code class="hljs sh" data-trim data-line-numbers="1|3-10|12-15" style="font-size: 16px;">
+            python3.10 convert_nc_to_csv.py ~/projects/sat-data-processing/GK2B_GOCI2_L2_20220809_001530_LA_Chl.nc Chl
+
+            gdal_rasterize \
+              -ot Float32 \
+              -3d \
+              -te 116.0 22.0 146.0 50.0 \
+              -tr 0.01 0.01 \
+              -of GTiff \
+              -a_nodata -999.0 \
+              GK2B_GOCI2_L2_20220809_001530_LA_Chl.vrt GK2B_GOCI2_L2_20220809_001530_LA_Chl.tiff
+
+            gdal_translate \
+              -ot Byte -of png -scale 0 5 0 255 \
+              "GK2B_GOCI2_L2_20220809_001530_LA_Chl.tiff" \
+              "GK2B_GOCI2_L2_20220809_001530_LA_Chl.png"
+          </code></pre>
+          <ul>
+            <li style="font-size: 25px">
+              netCDF 포맷 파일의 변수 데이터셋으로부터 구름에 의해 마스킹처리된 nodata 값인 위치를
+              제외한 포인트 형태의 벡터 파일로 변환한다.
+            </li>
+            <li style="font-size: 25px">
+              gdal_rasterize 프로그램으로 포인트 형태의 벡터 파일을 래스터 형태의 GeoTiff 파일로
+              변환한다.
+            </li>
+            <li style="font-size: 25px">
+              gdal_translate 프로그램으로 최종적으로 WebGL이 인식할 수 있도록 Float 형식의 GeoTiff
+              파일을 Byte 형식의 PNG 파일로 리스케일링하여 변환한다.
+            </li>
+          </ul>
+        </section>
+
+        <section data-transition="slide">
+          <h2>4. 다음 단계...</h2>
+          <ul>
+            <li style="font-size: 30px">프론트엔드 및 UI/UX 개선</li>
+            <li style="font-size: 30px">벡엔드 API 서버 개발</li>
+            <li style="font-size: 30px">데이터 파이프라인 구축</li>
+            <li style="font-size: 30px">Particle Simulation 적용</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>프론트엔드 및 UI/UX 개선</h4>
+          <img data-src="dist/assets/다음_1.png" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">관측 날짜 및 시간 선택 및 색상 범례 등 부가 기능</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>벡엔드 API 서버 개발</h4>
+          <img data-src="dist/assets/다음_2.png" style="height: 400px" />
+          <ul>
+            <li style="font-size: 30px">
+              현재 정적 파일을 불러와서 시각화하는 프로토타입이지만, 벡엔드 API 서버를 개발하여
+              사용자가 특정 변수 또는 시간을 선택하면 요청에 맞게 응답을 주도록 만들 예정입니다.
+            </li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>데이터 파이프라인 구축</h4>
+          <div class="r-stack">
+            <img
+              class="fragment fade-out"
+              data-fragment-index="0"
+              data-src="dist/assets/다음_3_a.png"
+              style="height: 400px"
+            />
+            <img
+              class="fragment current-visible"
+              data-fragment-index="0"
+              data-src="dist/assets/다음_3_b.png"
+              style="height: 400px"
+            />
+          </div>
+          <ul>
+            <li style="font-size: 30px">Airflow를 활용한 데이터 파이프라인 구축</li>
+            <li style="font-size: 30px">데이터 워크플로우 작성, 예약 및 모니터링</li>
+          </ul>
+        </section>
+        <section data-transition="slide">
+          <h4>파티클 시뮬레이션</h4>
+          <video data-autoplay data-src="dist/assets/다음_4.mp4" style="height: 400px"></video>
+          <ul>
+            <li style="font-size: 30px">
+              Transform Feedback 기술을 적용해서 해수의 유동이나 바람과 같이 크기와 방향을 동시에
+              갖는 벡터 자료를 입자 시뮬레이션으로 시각화해보려고 합니다.
+            </li>
+          </ul>
+        </section>
+
+        <section data-transition="slide">
+          <h2>5. 링크</h2>
+          <p>
+            <small>테스트 배포 링크와 코드를 볼 수 있는 GitHub 링크를 참고했습니다. </small>
+          </p>
+          <ul>
+            <li style="font-size: 30px">
+              <a href="http://211.178.39.246:12588/" target="_blank">테스트 배포 링크</a>
+            </li>
+            <li style="font-size: 30px">
+              <a href="https://github.com/dillabadu2138/ocean-sat-threejs" target="_blank"
+                >GitHub 링크</a
+              >
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+        slideNumber: 'c/t',
+        autoPlayMedia: true,
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>
